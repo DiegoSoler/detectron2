@@ -256,6 +256,8 @@ class FastRCNNOutputLayers(nn.Module):
         self.use_sigmoid_ce = use_sigmoid_ce
         self.fed_loss_num_classes = fed_loss_num_classes
 
+        self.classes_weights = torch.tensor([0, .7, .7, .7, 1.0], device='cuda:0').type(torch.float16) # TODO Add weights for each class
+
         if self.use_fed_loss:
             assert self.use_sigmoid_ce, "Please use sigmoid cross entropy loss with federated loss"
             fed_loss_cls_weights = get_fed_loss_cls_weights()
@@ -341,20 +343,15 @@ class FastRCNNOutputLayers(nn.Module):
         if self.use_sigmoid_ce:
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
-            print("\n Using softmax cross entropy loss \n")
-            torch.save(scores, "scores.pt")
-            torch.save(gt_classes, "gt_classes.pt")
-
-            loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
-            torch.save(loss_cls, "loss_cls.pt")
+            loss_cls = cross_entropy(scores, gt_classes, reduction="mean", weight=self.classes_weights)
         
-        assert False
         losses = {
             "loss_cls": loss_cls,
             "loss_box_reg": self.box_reg_loss(
                 proposal_boxes, gt_boxes, proposal_deltas, gt_classes
             ),
         }
+        assert False
         return {k: v * self.loss_weight.get(k, 1.0) for k, v in losses.items()}
 
     # Implementation from https://github.com/xingyizhou/CenterNet2/blob/master/projects/CenterNet2/centernet/modeling/roi_heads/fed_loss.py  # noqa
@@ -454,7 +451,8 @@ class FastRCNNOutputLayers(nn.Module):
             self.box_reg_loss_type,
             self.smooth_l1_beta,
         )
-
+        print('\n HERE \n')
+        print(loss_box_reg.shape)
         # The reg loss is normalized using the total number of regions (R), not the number
         # of foreground regions even though the box regression loss is only defined on
         # foreground regions. Why? Because doing so gives equal training influence to
