@@ -418,6 +418,10 @@ class RPN(nn.Module):
             gt_labels[valid_mask].to(torch.float32),
             reduction="sum",
         )
+        torch.save(objectness_loss, 'objectness_loss.pt')
+        torch.save(cat(pred_objectness_logits, dim=1)[valid_mask], 'pred_objectness_logits.pt')
+        torch.save(gt_labels[valid_mask].to(torch.float32), 'gt_labels.pt')
+
         normalizer = self.batch_size_per_image * num_images
         losses = {
             "loss_rpn_cls": objectness_loss / normalizer,
