@@ -451,8 +451,6 @@ class FastRCNNOutputLayers(nn.Module):
             self.box_reg_loss_type,
             self.smooth_l1_beta,
         )
-        print('\n HERE \n')
-        print(loss_box_reg.shape)
         # The reg loss is normalized using the total number of regions (R), not the number
         # of foreground regions even though the box regression loss is only defined on
         # foreground regions. Why? Because doing so gives equal training influence to
