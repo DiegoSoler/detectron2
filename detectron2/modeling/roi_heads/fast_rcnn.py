@@ -351,7 +351,6 @@ class FastRCNNOutputLayers(nn.Module):
                 proposal_boxes, gt_boxes, proposal_deltas, gt_classes
             ),
         }
-        assert False
         return {k: v * self.loss_weight.get(k, 1.0) for k, v in losses.items()}
 
     # Implementation from https://github.com/xingyizhou/CenterNet2/blob/master/projects/CenterNet2/centernet/modeling/roi_heads/fed_loss.py  # noqa
