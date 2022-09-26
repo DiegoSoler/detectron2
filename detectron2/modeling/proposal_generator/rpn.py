@@ -425,6 +425,7 @@ class RPN(nn.Module):
             # for loc loss. But it doesn't matter in practice
             "loss_rpn_loc": localization_loss / normalizer,
         }
+        assert False
         losses = {k: v * self.loss_weight.get(k, 1.0) for k, v in losses.items()}
         return losses
 
