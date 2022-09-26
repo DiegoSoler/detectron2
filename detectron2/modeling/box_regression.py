@@ -330,8 +330,6 @@ def _dense_box_regression_loss(
         smooth_l1_beta (float): beta parameter for the smooth L1 regression loss. Default to
             use L1 loss. Only used when `box_reg_loss_type` is "smooth_l1"
     """
-    print('\nhere in _dense_box_regression_loss')
-    print(f'box_reg_loss_type: {box_reg_loss_type}')
     if isinstance(anchors[0], Boxes):
         anchors = type(anchors[0]).cat(anchors).tensor  # (R, 4)
     else:
