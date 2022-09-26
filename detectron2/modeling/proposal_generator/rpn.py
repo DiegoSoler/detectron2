@@ -255,6 +255,8 @@ class RPN(nn.Module):
         self.box_reg_loss_type = box_reg_loss_type
         self.smooth_l1_beta = smooth_l1_beta
 
+        self.classes_weights = torch.tensor([0, .7, .7, .7, 1.0], device='cuda:0').type(torch.float16) # TODO Add weights for each class
+
     @classmethod
     def from_config(cls, cfg, input_shape: Dict[str, ShapeSpec]):
         in_features = cfg.MODEL.RPN.IN_FEATURES
@@ -413,14 +415,14 @@ class RPN(nn.Module):
         )
 
         valid_mask = gt_labels >= 0
+        target = gt_labels[valid_mask].to(torch.float32)
+        weights = torch.tensor([self.classes_weights[int(i)] for i in target], device='cuda:0')
         objectness_loss = F.binary_cross_entropy_with_logits(
             cat(pred_objectness_logits, dim=1)[valid_mask],
-            gt_labels[valid_mask].to(torch.float32),
+            target,
             reduction="sum",
+            weight=weights
         )
-        torch.save(objectness_loss, 'objectness_loss.pt')
-        torch.save(cat(pred_objectness_logits, dim=1)[valid_mask], 'pred_objectness_logits.pt')
-        torch.save(gt_labels[valid_mask].to(torch.float32), 'gt_labels.pt')
 
         normalizer = self.batch_size_per_image * num_images
         losses = {
