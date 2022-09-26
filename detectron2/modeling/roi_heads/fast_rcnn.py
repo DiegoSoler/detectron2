@@ -339,10 +339,13 @@ class FastRCNNOutputLayers(nn.Module):
             proposal_boxes = gt_boxes = torch.empty((0, 4), device=proposal_deltas.device)
 
         if self.use_sigmoid_ce:
+            print("Using sigmoid cross entropy loss")
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
+            print("Using softmax cross entropy loss")
             loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
-
+        
+        assert False
         losses = {
             "loss_cls": loss_cls,
             "loss_box_reg": self.box_reg_loss(
