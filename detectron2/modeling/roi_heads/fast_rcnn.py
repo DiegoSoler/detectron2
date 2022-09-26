@@ -344,7 +344,9 @@ class FastRCNNOutputLayers(nn.Module):
             print("\n Using softmax cross entropy loss \n")
             torch.save(scores, "scores.pt")
             torch.save(gt_classes, "gt_classes.pt")
+
             loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
+            torch.save(loss_cls, "loss_cls.pt")
         
         assert False
         losses = {
