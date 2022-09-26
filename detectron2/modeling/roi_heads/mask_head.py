@@ -108,7 +108,11 @@ def mask_rcnn_loss(pred_mask_logits: torch.Tensor, instances: List[Instances], v
             vis_mask = torch.stack([vis_mask] * 3, axis=0)
             storage.put_image(name + f" ({idx})", vis_mask)
 
-    mask_loss = F.binary_cross_entropy_with_logits(pred_mask_logits, gt_masks, reduction="mean")
+    classes_weights = [0, 0.7, 0.7, 0.7, 1.0] # Add weights for each class
+    weights = [torch.ones((mask_side_len,mask_side_len), dtype=torch.float32) * classes_weights[i] for i in gt_classes]
+    weights = torch.stack(weights).to(device=pred_mask_logits.device)
+
+    mask_loss = F.binary_cross_entropy_with_logits(pred_mask_logits, gt_masks, weight=weights, reduction="mean")
     return mask_loss
 
 
