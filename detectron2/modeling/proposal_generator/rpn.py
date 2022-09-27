@@ -255,7 +255,7 @@ class RPN(nn.Module):
         self.box_reg_loss_type = box_reg_loss_type
         self.smooth_l1_beta = smooth_l1_beta
 
-        self.classes_weights = torch.tensor([0, 1., 1., 1., 3.], device='cuda:0').type(torch.float16) # TODO Add weights for each class
+        self.classes_weights = torch.tensor([0, 5., 1., 1., 10.], device='cuda:0').type(torch.float16) # TODO Add weights for each class
 
     @classmethod
     def from_config(cls, cfg, input_shape: Dict[str, ShapeSpec]):

@@ -256,7 +256,7 @@ class FastRCNNOutputLayers(nn.Module):
         self.use_sigmoid_ce = use_sigmoid_ce
         self.fed_loss_num_classes = fed_loss_num_classes
 
-        self.classes_weights = torch.tensor([0, 1., 1., 1., 3.], device='cuda:0').type(torch.float16) # TODO Add weights for each class
+        self.classes_weights = torch.tensor([0, 5., 1., 1., 10.], device='cuda:0').type(torch.float16) # TODO Add weights for each class
 
         if self.use_fed_loss:
             assert self.use_sigmoid_ce, "Please use sigmoid cross entropy loss with federated loss"
