@@ -108,7 +108,7 @@ def mask_rcnn_loss(pred_mask_logits: torch.Tensor, instances: List[Instances], v
             vis_mask = torch.stack([vis_mask] * 3, axis=0)
             storage.put_image(name + f" ({idx})", vis_mask)
 
-    classes_weights = [1., 5., 1., 1., 1000.] # TODO Add weights for each class
+    classes_weights = [1., 1000000., 1., 1., 1000.] # TODO Add weights for each class
     weights = [torch.ones((mask_side_len,mask_side_len), dtype=torch.float32) * classes_weights[i] for i in gt_classes]
     weights = torch.stack(weights).to(device=pred_mask_logits.device)
 
